@@ -1,0 +1,28 @@
+# Optional all-in-one setup for local development/testing: runs Uptime Kuma
+# and this API together on one host. For a production setup where the API
+# runs on its own server against an existing Uptime Kuma instance, use
+# docker-compose.yml instead and point UPTIME_KUMA_URL in .env at that
+# instance.
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    volumes:
+      - uptime-kuma-data:/app/data
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  uptime-kuma-domain-api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      UPTIME_KUMA_URL: http://uptime-kuma:3001
+    ports:
+      - "8000:8000"
+    depends_on:
+      - uptime-kuma
+    restart: unless-stopped
+
+volumes:
+  uptime-kuma-data:

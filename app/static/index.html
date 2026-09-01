@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Domain API Referenz</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;0,9..144,560;0,9..144,650;1,9..144,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  img { max-width: 100%; }
+  :root {
+    --bg: #f5f8f6;
+    --surface: #ffffff;
+    --surface-muted: #eef2ef;
+    --border: #dbe3de;
+    --border-strong: #c1cdc5;
+    --text: #12201a;
+    --text-muted: #526056;
+    --text-faint: #8a978e;
+    --accent: #157a52;
+    --accent-soft: #e3f3ea;
+    --accent-contrast: #ffffff;
+    --code-bg: #101a15;
+    --code-text: #dfeae4;
+    --code-border: #24322b;
+    --code-faint: #7d9488;
+    --method-get: #2f5fa3;
+    --method-get-soft: #e6eefa;
+    --method-post: #157a52;
+    --method-post-soft: #e3f3ea;
+    --method-put: #93650b;
+    --method-put-soft: #faf1de;
+    --method-delete: #a83b2c;
+    --method-delete-soft: #fbe9e6;
+    --shadow: 0 1px 2px rgba(18,32,26,.05), 0 10px 28px rgba(18,32,26,.06);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1210;
+      --surface: #121a17;
+      --surface-muted: #17211d;
+      --border: #223029;
+      --border-strong: #2c3c33;
+      --text: #e7efe9;
+      --text-muted: #9fb0a6;
+      --text-faint: #647268;
+      --accent: #3ecf94;
+      --accent-soft: #143327;
+      --accent-contrast: #06140d;
+      --code-bg: #0a0f0d;
+      --code-text: #cfe6d9;
+      --code-border: #1d2b24;
+      --code-faint: #587566;
+      --method-get: #7fb0e8;
+      --method-get-soft: #142434;
+      --method-post: #3ecf94;
+      --method-post-soft: #123023;
+      --method-put: #e5b658;
+      --method-put-soft: #332a13;
+      --method-delete: #e6897a;
+      --method-delete-soft: #331e19;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0b1210;
+    --surface: #121a17;
+    --surface-muted: #17211d;
+    --border: #223029;
+    --border-strong: #2c3c33;
+    --text: #e7efe9;
+    --text-muted: #9fb0a6;
+    --text-faint: #647268;
+    --accent: #3ecf94;
+    --accent-soft: #143327;
+    --accent-contrast: #06140d;
+    --code-bg: #0a0f0d;
+    --code-text: #cfe6d9;
+    --code-border: #1d2b24;
+    --code-faint: #587566;
+    --method-get: #7fb0e8;
+    --method-get-soft: #142434;
+    --method-post: #3ecf94;
+    --method-post-soft: #123023;
+    --method-put: #e5b658;
+    --method-put-soft: #332a13;
+    --method-delete: #e6897a;
+    --method-delete-soft: #331e19;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; text-wrap: balance; margin: 0; }
+  code, pre, kbd, .mono { font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+
+  a { color: var(--accent); }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; }
+  .brand-mark {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--accent-soft); border: 1px solid var(--border);
+    display: grid; place-items: center; flex: none;
+  }
+  .brand-mark svg { width: 15px; height: 15px; }
+  .brand-name { font-family: 'Fraunces', serif; font-weight: 560; font-size: 1.05rem; }
+  .brand-version {
+    font-family: 'IBM Plex Mono', monospace; font-size: .72rem; color: var(--text-faint);
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px;
+  }
+
+  .config-field { display: flex; flex-direction: column; gap: 2px; }
+  .config-field label {
+    font-size: .68rem; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-faint); font-weight: 600;
+  }
+  .config-field input {
+    font-family: 'IBM Plex Mono', monospace; font-size: .8rem;
+    background: var(--surface-muted); border: 1px solid var(--border);
+    border-radius: 7px; padding: 6px 9px; color: var(--text); width: 200px;
+  }
+  .config-field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 220px minmax(0,1fr);
+    gap: 48px;
+    padding: 36px 24px 96px;
+    align-items: start;
+  }
+
+  nav.toc { position: sticky; top: 68px; display: flex; flex-direction: column; gap: 2px; }
+  nav.toc a {
+    text-decoration: none; color: var(--text-muted); font-size: .87rem;
+    padding: 6px 10px; border-radius: 7px; border-left: 2px solid transparent;
+  }
+  nav.toc a:hover { color: var(--text); background: var(--surface-muted); }
+  nav.toc a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 600; background: var(--accent-soft); }
+  nav.toc .toc-group-label {
+    font-size: .68rem; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text-faint); margin: 16px 0 4px; padding: 0 10px;
+  }
+  nav.toc .toc-group-label:first-child { margin-top: 0; }
+
+  main { min-width: 0; display: flex; flex-direction: column; gap: 64px; }
+
+  .lede {
+    max-width: 62ch;
+    color: var(--text-muted); font-size: 1.05rem;
+  }
+  .hero h1 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); font-weight: 560; margin-bottom: 12px; }
+  .hero { display: flex; flex-direction: column; gap: 14px; }
+
+  section { scroll-margin-top: 80px; display: flex; flex-direction: column; gap: 18px; }
+  section > h2 { font-size: 1.4rem; font-weight: 560; }
+  section > .section-intro { color: var(--text-muted); max-width: 68ch; }
+
+  /* ---------- Cards / surfaces ---------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .pad { padding: 20px 22px; }
+
+  /* ---------- Code blocks ---------- */
+  .code-block { position: relative; }
+  .code-block pre {
+    margin: 0; background: var(--code-bg); color: var(--code-text);
+    border: 1px solid var(--code-border); border-radius: var(--radius);
+    padding: 16px 18px; overflow-x: auto; font-size: .83rem; line-height: 1.6;
+  }
+  .code-block .copy-btn {
+    position: absolute; top: 9px; right: 9px;
+    font-family: 'Public Sans', sans-serif; font-size: .68rem; font-weight: 600;
+    letter-spacing: .02em;
+    background: rgba(255,255,255,.06); color: var(--code-text);
+    border: 1px solid var(--code-border); border-radius: 6px;
+    padding: 4px 9px; cursor: pointer;
+  }
+  .code-block .copy-btn:hover { background: rgba(255,255,255,.12); }
+  .code-block .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .code-label {
+    font-size: .68rem; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-faint); font-weight: 600; margin-bottom: 2px;
+  }
+  .kw { color: var(--code-faint); }
+  .str { color: #9fd4b8; }
+  :root[data-theme="light"] .str, body:not([data-theme]) .str {} /* keep token-driven */
+  .num { color: #d7b56d; }
+  .punct { color: var(--code-faint); }
+
+  /* ---------- Endpoint ---------- */
+  .endpoint { display: flex; flex-direction: column; gap: 16px; }
+  .endpoint-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .method {
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; font-weight: 600;
+    padding: 4px 9px; border-radius: 6px; letter-spacing: .02em;
+  }
+  .method.get { background: var(--method-get-soft); color: var(--method-get); }
+  .method.post { background: var(--method-post-soft); color: var(--method-post); }
+  .method.put { background: var(--method-put-soft); color: var(--method-put); }
+  .method.delete { background: var(--method-delete-soft); color: var(--method-delete); }
+  .path { font-family: 'IBM Plex Mono', monospace; font-size: .95rem; }
+  .auth-badge {
+    margin-left: auto; font-size: .68rem; font-weight: 600; letter-spacing: .04em;
+    color: var(--text-faint); border: 1px solid var(--border); border-radius: 999px;
+    padding: 3px 9px; display: flex; align-items: center; gap: 5px;
+  }
+  .auth-badge svg { width: 10px; height: 10px; }
+  .endpoint-desc { color: var(--text-muted); max-width: 68ch; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ---------- Tables ---------- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .86rem; min-width: 560px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  thead th {
+    font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint);
+    background: var(--surface-muted); font-weight: 600;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td .mono, th .mono { font-size: .82rem; }
+  .req-flag { font-size: .72rem; font-weight: 600; }
+  .req-flag.yes { color: var(--method-delete); }
+  .req-flag.no { color: var(--text-faint); }
+
+  /* ---------- Status pills for error table ---------- */
+  .status-pill {
+    font-family: 'IBM Plex Mono', monospace; font-size: .78rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px; display: inline-block;
+  }
+  .status-pill.s2 { background: var(--method-post-soft); color: var(--method-post); }
+  .status-pill.s4 { background: var(--method-put-soft); color: var(--method-put); }
+  .status-pill.s5 { background: var(--method-delete-soft); color: var(--method-delete); }
+
+  .callout {
+    display: flex; gap: 12px; align-items: flex-start;
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 12px 16px; background: var(--accent-soft);
+    color: var(--text); font-size: .9rem;
+  }
+  .callout svg { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--accent); }
+
+  footer {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px 64px;
+    color: var(--text-faint); font-size: .84rem;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    border-top: 1px solid var(--border); padding-top: 20px;
+  }
+  footer a { color: var(--text-muted); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; padding-top: 0; gap: 0; }
+    nav.toc {
+      position: sticky; top: 61px; z-index: 20;
+      background: var(--bg);
+      flex-direction: row; overflow-x: auto; gap: 4px;
+      padding: 10px 24px; border-bottom: 1px solid var(--border);
+      margin: 0 -24px;
+    }
+    nav.toc .toc-group-label { display: none; }
+    nav.toc a { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; }
+    nav.toc a.active { border-left-color: transparent; border-bottom-color: var(--accent); }
+    main { padding-top: 32px; gap: 48px; }
+    .topbar-inner { padding: 12px 24px; }
+    .config-field input { width: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent)"><path d="M3 12h4l2 7 4-16 2 9h6"/></svg>
+      </span>
+      <span class="brand-name">Domain API</span>
+      <span class="brand-version">v1.0.0</span>
+    </div>
+    <div class="config-field">
+      <label for="cfg-base-url">Basis-URL</label>
+      <input id="cfg-base-url" type="text" value="https://api.deine-domain.tld" spellcheck="false" autocomplete="off">
+    </div>
+    <div class="config-field">
+      <label for="cfg-api-key">API-Key</label>
+      <input id="cfg-api-key" type="text" value="dein-api-key" spellcheck="false" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="Inhalt">
+    <div class="toc-group-label">Start</div>
+    <a href="#uebersicht">Übersicht</a>
+    <a href="#auth">Authentifizierung</a>
+    <a href="#schnellstart">Schnellstart</a>
+    <div class="toc-group-label">Endpunkte</div>
+    <a href="#get-domains">Domains auflisten</a>
+    <a href="#get-domain">Domain abrufen</a>
+    <a href="#post-domain">Domain anlegen</a>
+    <a href="#put-domain">Domain ändern</a>
+    <a href="#delete-domain">Domain löschen</a>
+    <div class="toc-group-label">Referenz</div>
+    <a href="#felder">Felder</a>
+    <a href="#fehler">Fehlercodes</a>
+  </nav>
+
+  <main>
+    <div class="hero" id="uebersicht">
+      <h1>Uptime Kuma Domain API</h1>
+      <p class="lede">
+        Eine schlanke REST-API, um Domains, die dein Uptime-Kuma-Monitoring
+        überwachen soll, aus einem externen System heraus zu pflegen — anlegen,
+        ändern, pausieren und löschen. Jede Domain entspricht in Uptime Kuma
+        einem HTTP(s)-Monitor.
+      </p>
+    </div>
+
+    <section id="auth">
+      <h2>Authentifizierung</h2>
+      <p class="section-intro">
+        Jeder Endpunkt außer <code class="mono">/health</code> erwartet einen
+        statischen API-Key im Header <code class="mono">X-API-Key</code>. Der
+        Key wird bei der Installation in der <code class="mono">.env</code>
+        des Servers festgelegt.
+      </p>
+      <div class="code-block">
+        <span class="copy-btn" data-copy>Kopieren</span>
+        <pre><span class="kw">X-API-Key:</span> <span class="api-key-inline">dein-api-key</span></pre>
+      </div>
+      <div class="callout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span>Fehlt der Header oder stimmt der Key nicht, antwortet die API mit <span class="status-pill s4" style="padding:1px 6px;">401</span>. Betreibe die API produktiv immer hinter TLS (Reverse Proxy) — der Key ersetzt kein HTTPS.</span>
+      </div>
+    </section>
+
+    <section id="schnellstart">
+      <h2>Schnellstart</h2>
+      <p class="section-intro">Eine Domain anlegen und die Liste aller überwachten Domains abrufen:</p>
+      <div class="code-block">
+        <span class="code-label">cURL</span>
+        <span class="copy-btn" data-copy>Kopieren</span>
+        <pre data-template>curl -X POST {{BASE_URL}}/domains \
+  -H "X-API-Key: {{API_KEY}}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "domain": "paneevino-coswig.de",
+    "interval": 60
+  }'
+
+curl {{BASE_URL}}/domains \
+  -H "X-API-Key: {{API_KEY}}"</pre>
+      </div>
+    </section>
+
+    <!-- ============ GET /domains ============ -->
+    <section id="get-domains">
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method get">GET</span>
+          <span class="path">/domains</span>
+          <span class="auth-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API-Key
+          </span>
+        </div>
+        <p class="endpoint-desc">Listet alle Domains auf, die aktuell als HTTP(s)-Monitor in Uptime Kuma überwacht werden.</p>
+        <div class="two-col">
+          <div class="code-block">
+            <span class="code-label">Anfrage</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre data-template>curl {{BASE_URL}}/domains \
+  -H "X-API-Key: {{API_KEY}}"</pre>
+          </div>
+          <div class="code-block">
+            <span class="code-label">200 OK</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre>[
+  {
+    "id": 12,
+    "domain": "paneevino-coswig.de",
+    "name": "Paneevino Coswig",
+    "url": "https://paneevino-coswig.de",
+    "active": true,
+    "interval": 60,
+    "retry_interval": 60,
+    "max_retries": 0,
+    "resend_interval": 0,
+    "upside_down": false,
+    "ignore_tls": false,
+    "accepted_statuscodes": ["200-299"],
+    "notification_ids": [1]
+  },
+  {
+    "id": 13,
+    "domain": "1a-gebaeudereinigung.de",
+    "name": "1A Gebäudereinigung",
+    "url": "https://1a-gebaeudereinigung.de",
+    "active": true,
+    "interval": 60,
+    "retry_interval": 60,
+    "max_retries": 0,
+    "resend_interval": 0,
+    "upside_down": false,
+    "ignore_tls": false,
+    "accepted_statuscodes": ["200-299"],
+    "notification_ids": [1]
+  }
+]</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GET /domains/{id} ============ -->
+    <section id="get-domain">
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method get">GET</span>
+          <span class="path">/domains/{id}</span>
+          <span class="auth-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API-Key
+          </span>
+        </div>
+        <p class="endpoint-desc">Ruft eine einzelne Domain anhand ihrer Monitor-ID ab.</p>
+        <div class="two-col">
+          <div class="code-block">
+            <span class="code-label">Anfrage</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre data-template>curl {{BASE_URL}}/domains/12 \
+  -H "X-API-Key: {{API_KEY}}"</pre>
+          </div>
+          <div class="code-block">
+            <span class="code-label">404 Not Found</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre>{
+  "detail": "No domain monitor with id 999."
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ POST /domains ============ -->
+    <section id="post-domain">
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method post">POST</span>
+          <span class="path">/domains</span>
+          <span class="auth-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API-Key
+          </span>
+        </div>
+        <p class="endpoint-desc">
+          Legt eine neue Domain an. Es wird ein HTTP(s)-Monitor mit
+          <code class="mono">url = {scheme}://{domain}</code> in Uptime Kuma erzeugt.
+          Nur <code class="mono">domain</code> ist erforderlich — alle anderen Felder haben sinnvolle Standardwerte.
+        </p>
+        <div class="two-col">
+          <div class="code-block">
+            <span class="code-label">Anfrage</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre data-template>curl -X POST {{BASE_URL}}/domains \
+  -H "X-API-Key: {{API_KEY}}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "domain": "bauernhof-nordheide.de",
+    "name": "Bauernhof Nordheide",
+    "interval": 60,
+    "notification_ids": [1]
+  }'</pre>
+          </div>
+          <div class="code-block">
+            <span class="code-label">201 Created</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre>{
+  "id": 24,
+  "domain": "bauernhof-nordheide.de",
+  "name": "Bauernhof Nordheide",
+  "url": "https://bauernhof-nordheide.de",
+  "active": true,
+  "interval": 60,
+  "retry_interval": 60,
+  "max_retries": 0,
+  "resend_interval": 0,
+  "upside_down": false,
+  "ignore_tls": false,
+  "accepted_statuscodes": ["200-299"],
+  "notification_ids": [1]
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PUT /domains/{id} ============ -->
+    <section id="put-domain">
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method put">PUT</span>
+          <span class="path">/domains/{id}</span>
+          <span class="auth-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API-Key
+          </span>
+        </div>
+        <p class="endpoint-desc">
+          Ändert eine bestehende Domain. Es werden nur die Felder aktualisiert, die im Body enthalten sind —
+          alle anderen bleiben unverändert. Über <code class="mono">active</code> lässt sich der Monitor
+          pausieren (<code class="mono">false</code>) oder fortsetzen (<code class="mono">true</code>).
+        </p>
+        <div class="two-col">
+          <div class="code-block">
+            <span class="code-label">Anfrage — pausieren &amp; Intervall ändern</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre data-template>curl -X PUT {{BASE_URL}}/domains/24 \
+  -H "X-API-Key: {{API_KEY}}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "active": false,
+    "interval": 300
+  }'</pre>
+          </div>
+          <div class="code-block">
+            <span class="code-label">200 OK</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre>{
+  "id": 24,
+  "domain": "bauernhof-nordheide.de",
+  "name": "Bauernhof Nordheide",
+  "url": "https://bauernhof-nordheide.de",
+  "active": false,
+  "interval": 300,
+  "retry_interval": 60,
+  "max_retries": 0,
+  "resend_interval": 0,
+  "upside_down": false,
+  "ignore_tls": false,
+  "accepted_statuscodes": ["200-299"],
+  "notification_ids": [1]
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DELETE /domains/{id} ============ -->
+    <section id="delete-domain">
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method delete">DELETE</span>
+          <span class="path">/domains/{id}</span>
+          <span class="auth-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            API-Key
+          </span>
+        </div>
+        <p class="endpoint-desc">Entfernt eine Domain endgültig aus Uptime Kuma — der Verlauf des Monitors geht dabei verloren.</p>
+        <div class="two-col">
+          <div class="code-block">
+            <span class="code-label">Anfrage</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre data-template>curl -X DELETE {{BASE_URL}}/domains/24 \
+  -H "X-API-Key: {{API_KEY}}"</pre>
+          </div>
+          <div class="code-block">
+            <span class="code-label">200 OK</span>
+            <span class="copy-btn" data-copy>Kopieren</span>
+            <pre>{
+  "message": "Domain monitor 24 deleted."
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Felder ============ -->
+    <section id="felder">
+      <h2>Felder</h2>
+      <p class="section-intro">
+        Gilt für den Request-Body von <span class="path" style="font-size:.85em">POST</span>/<span class="path" style="font-size:.85em">PUT</span>
+        sowie für das Response-Objekt. Bei <span class="path" style="font-size:.85em">PUT</span> ist kein Feld
+        Pflicht — ausgelassene Felder bleiben unverändert.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Feld</th><th>Typ</th><th>Pflicht bei POST</th><th>Standard</th><th>Beschreibung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">domain</span></td><td><span class="mono">string</span></td><td><span class="req-flag yes">Ja</span></td><td>—</td><td>Hostname ohne Schema, z. B. <span class="mono">example.com</span>.</td></tr>
+            <tr><td><span class="mono">name</span></td><td><span class="mono">string</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">domain</span></td><td>Anzeigename in Uptime Kuma.</td></tr>
+            <tr><td><span class="mono">scheme</span></td><td><span class="mono">"http" | "https"</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">"https"</span></td><td>Schema, mit dem die Monitor-URL gebildet wird.</td></tr>
+            <tr><td><span class="mono">interval</span></td><td><span class="mono">int</span> (≥ 20)</td><td><span class="req-flag no">Nein</span></td><td><span class="mono">60</span></td><td>Prüfintervall in Sekunden.</td></tr>
+            <tr><td><span class="mono">retry_interval</span></td><td><span class="mono">int</span> (≥ 20)</td><td><span class="req-flag no">Nein</span></td><td><span class="mono">60</span></td><td>Abstand zwischen Wiederholungsversuchen in Sekunden.</td></tr>
+            <tr><td><span class="mono">max_retries</span></td><td><span class="mono">int</span> (≥ 0)</td><td><span class="req-flag no">Nein</span></td><td><span class="mono">0</span></td><td>Anzahl Wiederholungen, bevor der Monitor als „down“ gilt.</td></tr>
+            <tr><td><span class="mono">resend_interval</span></td><td><span class="mono">int</span> (≥ 0)</td><td><span class="req-flag no">Nein</span></td><td><span class="mono">0</span></td><td>Benachrichtigung alle N Prüfungen erneut senden, solange down (<span class="mono">0</span> = deaktiviert).</td></tr>
+            <tr><td><span class="mono">upside_down</span></td><td><span class="mono">bool</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">false</span></td><td>Status invertieren (erreichbar gilt als „down“).</td></tr>
+            <tr><td><span class="mono">ignore_tls</span></td><td><span class="mono">bool</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">false</span></td><td>Ungültige/abgelaufene TLS-Zertifikate ignorieren.</td></tr>
+            <tr><td><span class="mono">accepted_statuscodes</span></td><td><span class="mono">string[]</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">["200-299"]</span></td><td>HTTP-Statuscode-Bereiche, die als „up“ gelten.</td></tr>
+            <tr><td><span class="mono">notification_ids</span></td><td><span class="mono">int[]</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">[]</span></td><td>IDs der Uptime-Kuma-Benachrichtigungskanäle, die bei Statusänderung ausgelöst werden.</td></tr>
+            <tr><td><span class="mono">active</span></td><td><span class="mono">bool</span></td><td><span class="req-flag no">Nein</span></td><td><span class="mono">true</span></td><td>Ob der Monitor aktiv laufen oder pausiert sein soll.</td></tr>
+            <tr><td><span class="mono">id</span> <span class="text-faint" style="color:var(--text-faint)">·nur Response</span></td><td><span class="mono">int</span></td><td>—</td><td>—</td><td>Monitor-ID in Uptime Kuma, wird beim Anlegen vergeben.</td></tr>
+            <tr><td><span class="mono">url</span> <span style="color:var(--text-faint)">·nur Response</span></td><td><span class="mono">string</span></td><td>—</td><td>—</td><td>Vollständige Monitor-URL (<span class="mono">scheme://domain</span>).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ Fehler ============ -->
+    <section id="fehler">
+      <h2>Fehlercodes</h2>
+      <p class="section-intro">Alle Fehlerantworten haben die Form <span class="mono">{"detail": "…"}</span> (bzw. eine Liste bei Validierungsfehlern).</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Status</th><th>Bedeutung</th><th>Typische Ursache</th></tr></thead>
+          <tbody>
+            <tr><td><span class="status-pill s4">401</span></td><td>Unauthorized</td><td><span class="mono">X-API-Key</span>-Header fehlt oder ist falsch.</td></tr>
+            <tr><td><span class="status-pill s4">404</span></td><td>Not Found</td><td>Keine Domain mit dieser ID, oder der Monitor ist kein HTTP(s)-Monitor.</td></tr>
+            <tr><td><span class="status-pill s4">422</span></td><td>Unprocessable Entity</td><td>Ungültiger Request-Body, z. B. <span class="mono">interval</span> unter 20 oder <span class="mono">scheme</span> außerhalb von <span class="mono">http</span>/<span class="mono">https</span>.</td></tr>
+            <tr><td><span class="status-pill s5">502</span></td><td>Bad Gateway</td><td>Uptime Kuma ist nicht erreichbar, oder hat die Operation abgelehnt (z. B. falsche Zugangsdaten in der Server-<span class="mono">.env</span>).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <span class="code-label">Beispiel — 422</span>
+        <span class="copy-btn" data-copy>Kopieren</span>
+        <pre>{
+  "detail": [
+    {
+      "type": "greater_than_equal",
+      "loc": ["body", "interval"],
+      "msg": "Input should be greater than or equal to 20",
+      "input": 5,
+      "ctx": { "ge": 20 }
+    }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <div class="callout" id="weiterfuehrend">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>
+        Diese Seite ist eine ergänzende Referenz. Die interaktive, aus dem Code generierte
+        Dokumentation läuft direkt auf deinem Server unter <span class="mono">/docs</span>
+        (Swagger UI) und <span class="mono">/redoc</span>.
+      </span>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <span>Uptime Kuma Domain API · REST-Wrapper um die Socket.IO-Schnittstelle von Uptime Kuma</span>
+  <span>Repository: <a href="https://github.com/MeinholC/UptimeKuma-API">github.com/MeinholC/UptimeKuma-API</a></span>
+</footer>
+
+<script>
+(function () {
+  var LS_URL = 'kuma-doc-base-url';
+  var LS_KEY = 'kuma-doc-api-key';
+  var urlInput = document.getElementById('cfg-base-url');
+  var keyInput = document.getElementById('cfg-api-key');
+
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var savedUrl = safeGet(LS_URL);
+  var savedKey = safeGet(LS_KEY);
+  if (savedUrl) {
+    urlInput.value = savedUrl;
+  } else if (window.location.origin && window.location.origin.indexOf('http') === 0) {
+    urlInput.value = window.location.origin;
+  }
+  if (savedKey) keyInput.value = savedKey;
+
+  function render() {
+    var base = (urlInput.value || 'https://api.deine-domain.tld').replace(/\/+$/, '');
+    var key = keyInput.value || 'dein-api-key';
+    document.querySelectorAll('[data-template]').forEach(function (el) {
+      if (!el.dataset.raw) el.dataset.raw = el.textContent;
+      el.textContent = el.dataset.raw.split('{{BASE_URL}}').join(base).split('{{API_KEY}}').join(key);
+    });
+    document.querySelectorAll('.api-key-inline').forEach(function (el) { el.textContent = key; });
+  }
+
+  urlInput.addEventListener('input', function () { safeSet(LS_URL, urlInput.value); render(); });
+  keyInput.addEventListener('input', function () { safeSet(LS_KEY, keyInput.value); render(); });
+  render();
+
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre ? pre.textContent : '';
+      var original = btn.textContent;
+      function done(ok) {
+        btn.textContent = ok ? 'Kopiert' : 'Fehler';
+        setTimeout(function () { btn.textContent = original; }, 1400);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      } else {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+          done(true);
+        } catch (e) { done(false); }
+      }
+    });
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window && targets.length) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = links[targets.indexOf(entry.target)];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          links.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+    targets.forEach(function (t) { observer.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>
